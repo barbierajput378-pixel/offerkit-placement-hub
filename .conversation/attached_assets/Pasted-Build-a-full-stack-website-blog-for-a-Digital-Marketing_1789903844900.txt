@@ -1,0 +1,63 @@
+Build a full-stack website + blog for a Digital Marketing college assignment. Topic: a campus placement prep hub for engineering students in India. I'll be graded on UX/UI, structure, original content, novelty, and analytics (visits, clicks, user details). Use Replit's default stack (React + Express + PostgreSQL).
+
+## Brand
+- Name: OfferKit
+- Tagline: "From campus to CTC."
+- Audience: engineering students (2nd–4th year) in India preparing for placements
+- Tone: friendly, motivating, peer-to-peer. Original copy, zero grammar mistakes, no lorem ipsum anywhere
+- Create a simple text-based logo for "OfferKit" (wordmark with a small briefcase or checkmark icon) and use it in the header and favicon
+
+## UX/UI
+- Modern, responsive, mobile-first. One cohesive palette (max 3 colors + neutrals), 2 Google Fonts max (heading + body)
+- Consistent spacing/alignment, strong hero section with the tagline, good contrast, subtle hover/scroll animations
+- Relevant Unsplash images with alt text
+- Light/dark mode toggle
+
+## Structure
+- Sticky header: logo + nav (Home, Resources, Blog, Tools, About, Contact)
+- Footer: quick links, social icons, newsletter form, copyright
+- Blog page with sidebar (search, categories, recent posts, popular tags)
+- Post pages with breadcrumbs, share buttons, related posts
+- Resources page: filterable cards for Aptitude, DSA, Core CS (DBMS/OS/CN), HR Interview, Resume, Group Discussion
+- Working internal links everywhere, custom 404
+
+## Content
+- Home: hero + CTA, 3 value sections, testimonials, newsletter CTA
+- Blog: 6 complete original posts (400–600 words each) with headings, categories, dates. Topics:
+  1. 8-week placement prep roadmap
+  2. How to build an ATS-friendly resume
+  3. Top 10 HR interview questions with sample answers
+  4. Aptitude shortcuts that save time
+  5. How to prepare DSA in 30 days
+  6. Mistakes students make in group discussions
+- About: story, mission, vision
+- Contact: form saved to DB with success/error states
+
+## Novelty
+- **Placement Readiness Quiz**: 10 questions, gives a readiness score + personalized next steps, saved to DB
+- **Resume Score Checker**: user pastes resume text, gets a keyword/structure score with improvement tips (rule-based, no paid API)
+- **30-day prep planner**: user picks target role + weak areas, gets a generated day-by-day checklist
+- Reading time + "most read" ranking on blog posts
+- Newsletter popup on exit-intent (once per session)
+
+## Analytics (most important)
+1. Google Analytics 4: gtag script in head, measurement ID from env var `VITE_GA_ID`. Custom events: `cta_click`, `newsletter_signup`, `contact_submit`, `blog_read`, `share_click`, `quiz_complete`, `resume_check`, `planner_generate`
+2. First-party tracking in PostgreSQL: page views, unique visitors (anonymous ID in localStorage), path, referrer, UTM params, device type, browser, OS, screen size, session duration, button/link clicks
+3. Private dashboard at `/admin/analytics` (password from env var `ADMIN_PASSWORD`):
+   - Total visits, unique visitors, avg. session time
+   - Visits over time (line chart, 7/30 days)
+   - Top pages, top clicked buttons, top referrers/UTM sources
+   - Device + browser split
+   - Newsletter signups, contact submissions, quiz completions, resume checks
+   - CSV export
+4. Don't store raw IPs
+
+## SEO / marketing basics
+- Unique title + meta description per page, Open Graph tags, sitemap.xml, robots.txt, favicon
+- Semantic HTML, lazy-loaded images, fast loading
+- Add a landing page at `/prep-bootcamp` with a clear CTA and lead form, to use as the Google Ads landing page
+
+## Also
+- Seed the DB with sample analytics data so the dashboard looks populated for the demo
+- Clean, commented code
+- Deploy and give me the public link
