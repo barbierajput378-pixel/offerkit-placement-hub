@@ -1,5 +1,6 @@
 {
   "name": "@workspace/db",
+  "packageManager": "pnpm@12.5.1",
   "version": "0.0.0",
   "private": true,
   "type": "module",
