@@ -1,4 +1,4 @@
-import { jsonb, pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
+import { boolean, jsonb, pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -6,6 +6,8 @@ export const newsletterSignupsTable = pgTable("newsletter_signups", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
   source: text("source").notNull().default("footer"),
+  /** True for rows inserted by the seed script — can be hidden on the dashboard. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -14,6 +16,8 @@ export const contactSubmissionsTable = pgTable("contact_submissions", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   message: text("message").notNull(),
+  /** True for rows inserted by the seed script. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -23,6 +27,8 @@ export const quizResultsTable = pgTable("quiz_results", {
   score: integer("score").notNull(),
   answers: jsonb("answers").$type<number[]>().notNull(),
   level: text("level").notNull(),
+  /** True for rows inserted by the seed script. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -30,6 +36,8 @@ export const resumeChecksTable = pgTable("resume_checks", {
   id: serial("id").primaryKey(),
   visitorId: text("visitor_id").notNull(),
   score: integer("score").notNull(),
+  /** True for rows inserted by the seed script. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -38,6 +46,8 @@ export const plannerPlansTable = pgTable("planner_plans", {
   visitorId: text("visitor_id").notNull(),
   targetRole: text("target_role").notNull(),
   weakAreas: jsonb("weak_areas").$type<string[]>().notNull(),
+  /** True for rows inserted by the seed script. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -56,6 +66,8 @@ export const analyticsEventsTable = pgTable("analytics_events", {
   os: text("os"),
   screen: text("screen"),
   duration: integer("duration"),
+  /** True for rows inserted by the seed script. */
+  isSample: boolean("is_sample").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

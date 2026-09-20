@@ -1,15 +1,9 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 
+// PORT defaults to 3001 in development. In production (Render) PORT is set by the platform.
 const rawPort = process.env["PORT"];
-
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
-
-const port = Number(rawPort);
+const port = rawPort ? Number(rawPort) : 3001;
 
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);

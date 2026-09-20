@@ -3,16 +3,19 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "dev": "concurrently --kill-others --prefix \"[{name}]\" --names \"api,web\" \"pnpm --filter @workspace/api-server dev\" \"pnpm --filter @workspace/offerkit dev\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "migrate": "pnpm --filter @workspace/db migrate",
+    "seed": "pnpm --filter @workspace/scripts seed"
   },
   "private": true,
   "dependencies": {
     "@replit/connectors-sdk": "^0.4.3"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "prettier": "^3.9.6",
     "typescript": "~5.9.3"
   }
