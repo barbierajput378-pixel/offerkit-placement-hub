@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: OfferKit placement preparation hub API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: content
+    description: Public OfferKit content
+  - name: engagement
+    description: Newsletter, contact, tools, and tracking
+  - name: analytics
+    description: Private first-party analytics
 paths:
   /healthz:
     get:
@@ -24,6 +30,263 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [content]
+      summary: List blog posts
+      responses:
+        "200":
+          description: Blog posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BlogPost"
+  /posts/{slug}:
+    get:
+      operationId: getPost
+      tags: [content]
+      summary: Get a blog post by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /resources:
+    get:
+      operationId: listResources
+      tags: [content]
+      summary: List preparation resources
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Preparation resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Resource"
+  /newsletter:
+    post:
+      operationId: subscribeNewsletter
+      tags: [engagement]
+      summary: Subscribe to the OfferKit newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsletterInput"
+      responses:
+        "201":
+          description: Newsletter signup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Invalid signup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /contact:
+    post:
+      operationId: submitContact
+      tags: [engagement]
+      summary: Submit a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactInput"
+      responses:
+        "201":
+          description: Contact submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Invalid message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /quiz/results:
+    post:
+      operationId: submitQuizResult
+      tags: [engagement]
+      summary: Save a placement readiness quiz result
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizResultInput"
+      responses:
+        "201":
+          description: Quiz result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizResult"
+  /resume/check:
+    post:
+      operationId: checkResume
+      tags: [engagement]
+      summary: Score resume text using rule-based checks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResumeCheckInput"
+      responses:
+        "200":
+          description: Resume score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResumeCheck"
+  /planner:
+    post:
+      operationId: generatePlanner
+      tags: [engagement]
+      summary: Generate a 30-day preparation plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlannerInput"
+      responses:
+        "200":
+          description: 30-day plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlannerPlan"
+  /events:
+    post:
+      operationId: trackEvent
+      tags: [engagement]
+      summary: Record a first-party analytics event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackEventInput"
+      responses:
+        "202":
+          description: Event accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+  /admin/session:
+    post:
+      operationId: createAdminSession
+      tags: [analytics]
+      summary: Validate the analytics dashboard password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAuthInput"
+      responses:
+        "200":
+          description: Admin access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResponse"
+        "401":
+          description: Invalid or unavailable admin password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/analytics:
+    get:
+      operationId: getAnalytics
+      tags: [analytics]
+      summary: Get analytics dashboard data
+      parameters:
+        - name: x-admin-password
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: query
+          required: false
+          schema:
+            type: integer
+            enum: [7, 30]
+            default: 7
+      responses:
+        "200":
+          description: Analytics dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsDashboard"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/analytics/export:
+    get:
+      operationId: exportAnalytics
+      tags: [analytics]
+      summary: Export analytics as CSV
+      parameters:
+        - name: x-admin-password
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: CSV export
+          content:
+            text/csv:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +296,265 @@ components:
           type: string
       required:
         - status
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+    BlogPost:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        excerpt:
+          type: string
+        category:
+          type: string
+        date:
+          type: string
+          format: date
+        readTime:
+          type: integer
+        views:
+          type: integer
+        image:
+          type: string
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+      required: [slug, title, excerpt, category, date, readTime, views, image, content, tags]
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        level:
+          type: string
+        duration:
+          type: string
+        href:
+          type: string
+      required: [id, title, description, category, level, duration, href]
+    NewsletterInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        source:
+          type: string
+      required: [email]
+    ContactInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        message:
+          type: string
+      required: [name, email, message]
+    QuizResultInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        score:
+          type: integer
+        answers:
+          type: array
+          items:
+            type: integer
+        level:
+          type: string
+      required: [visitorId, score, answers, level]
+    QuizResult:
+      type: object
+      properties:
+        score:
+          type: integer
+        level:
+          type: string
+        nextSteps:
+          type: array
+          items:
+            type: string
+      required: [score, level, nextSteps]
+    ResumeCheckInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        resumeText:
+          type: string
+      required: [visitorId, resumeText]
+    ResumeCheck:
+      type: object
+      properties:
+        score:
+          type: integer
+        strengths:
+          type: array
+          items:
+            type: string
+        improvements:
+          type: array
+          items:
+            type: string
+      required: [score, strengths, improvements]
+    PlannerInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        targetRole:
+          type: string
+        weakAreas:
+          type: array
+          items:
+            type: string
+      required: [visitorId, targetRole, weakAreas]
+    PlannerDay:
+      type: object
+      properties:
+        day:
+          type: integer
+        title:
+          type: string
+        tasks:
+          type: array
+          items:
+            type: string
+      required: [day, title, tasks]
+    PlannerPlan:
+      type: object
+      properties:
+        targetRole:
+          type: string
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlannerDay"
+      required: [targetRole, days]
+    TrackEventInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        event:
+          type: string
+        path:
+          type: string
+        label:
+          type: ["string", "null"]
+        referrer:
+          type: ["string", "null"]
+        utmSource:
+          type: ["string", "null"]
+        utmMedium:
+          type: ["string", "null"]
+        utmCampaign:
+          type: ["string", "null"]
+        device:
+          type: ["string", "null"]
+        browser:
+          type: ["string", "null"]
+        os:
+          type: ["string", "null"]
+        screen:
+          type: ["string", "null"]
+        duration:
+          type: ["integer", "null"]
+      required: [visitorId, event, path]
+    AdminAuthInput:
+      type: object
+      properties:
+        password:
+          type: string
+      required: [password]
+    AdminAuthResponse:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+      required: [authorized]
+    AnalyticsPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        visits:
+          type: integer
+        uniqueVisitors:
+          type: integer
+      required: [date, visits, uniqueVisitors]
+    AnalyticsLabelValue:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: integer
+      required: [label, value]
+    AnalyticsDashboard:
+      type: object
+      properties:
+        totalVisits:
+          type: integer
+        uniqueVisitors:
+          type: integer
+        averageSessionSeconds:
+          type: integer
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsPoint"
+        topPages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsLabelValue"
+        topClicks:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsLabelValue"
+        topSources:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsLabelValue"
+        devices:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsLabelValue"
+        browsers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalyticsLabelValue"
+        newsletterSignups:
+          type: integer
+        contactSubmissions:
+          type: integer
+        quizCompletions:
+          type: integer
+        resumeChecks:
+          type: integer
+      required: [totalVisits, uniqueVisitors, averageSessionSeconds, series, topPages, topClicks, topSources, devices, browsers, newsletterSignups, contactSubmissions, quizCompletions, resumeChecks]
 

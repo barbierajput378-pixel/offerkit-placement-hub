@@ -1,0 +1,1 @@
+- [Generated fetch client DOM iterable support](api-client-dom-iterable.md) — Orval clients using Headers.entries need TypeScript's dom.iterable library.

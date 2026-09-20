@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "OfferKit"
+description = "A campus placement preparation hub for engineering students in India, with original career content, practical tools, and first-party engagement analytics."
+version = "1.0.0"
+id = "artifacts/offerkit"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20142
+
+[services.development]
+run = "pnpm --filter @workspace/offerkit run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/offerkit", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/offerkit/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20142"
+BASE_PATH = "/"
